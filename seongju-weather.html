@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1D6B3B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap&text=%EC%84%B1%EC%A3%BC%EC%9D%8D%EB%AF%BC%EC%9D%84%20%EC%9C%84%ED%95%9C%20%EC%9A%B0%EB%A6%AC%20%EB%8F%99%EB%84%A4%20%EC%8B%A4%EC%8B%9C%EA%B0%84%20%EA%B8%B0%EC%83%81%ED%86%B5%EB%B3%B40123456789-.%E2%84%83%C2%B0">
+<title>성주읍 기상통보</title>
+<!-- 카카오톡 미리보기 OG 태그 시작 -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="성주읍 기상통보">
+<meta property="og:title" content="성주읍민을 위한 우리 동네 실시간 기상통보">
+<meta property="og:description" content="성주읍의 현재 날씨와 시간별 예보, 생활·농가 기상정보를 확인하세요.">
+<meta property="og:url" content="https://jeon-seungdae.github.io/apps/">
+<meta property="og:image" content="https://jeon-seungdae.github.io/apps/seongju-weather.png">
+<meta property="og:image:secure_url" content="https://jeon-seungdae.github.io/apps/seongju-weather.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="성주읍민을 위한 우리 동네 실시간 기상통보">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="성주읍민을 위한 우리 동네 실시간 기상통보">
+<meta name="twitter:description" content="성주읍의 현재 날씨와 시간별 예보, 생활·농가 기상정보를 확인하세요.">
+<meta name="twitter:image" content="https://jeon-seungdae.github.io/apps/seongju-weather.png">
+<!-- 카카오톡 미리보기 OG 태그 끝 -->
+
+<style>
+:root{
+  --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo","Batang",serif;
+  --paper:#ECF0E9; --sheet:#FBFCFA; --ink:#16241C; --sub:#586A5F; --line:#D3DCD2;
+  --ok:#1D6B3B; --warn:#A86A00; --bad:#B3261E; --sky:#2A6599; --melon:#E9B91F;
+  --h0:#1D6B3B; --h1:#A86A00; --h2:#B3261E;
+}
+@media(prefers-color-scheme:dark){
+  :root{--paper:#0E1511; --sheet:#16201A; --ink:#EEF3EC; --sub:#A3B5A9; --line:#2A382F;
+        --ok:#3FA467; --warn:#D9992A; --bad:#E5584B; --sky:#7DB2E3}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:20px/1.6 -apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  padding-bottom:env(safe-area-inset-bottom)}
+main{max-width:480px;margin:0 auto;padding:0 0 12px}
+a{color:var(--sky)}
+
+/* 맨 위: 상태 색 + 참외 줄무늬 */
+.hero{position:relative;overflow:hidden;color:#fff;background:var(--h0);
+  padding:calc(env(safe-area-inset-top) + 20px) 22px 28px;border-radius:0 0 28px 28px}
+.hero.l1{background:var(--h1)} .hero.l2{background:var(--h2)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 2px,transparent 2px 28px)}
+.hero>*{position:relative}
+.brand{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1.45;word-break:keep-all}
+.by{font-size:20px;opacity:.92;margin-top:2px}
+.rule{width:48px;height:3px;border-radius:2px;background:var(--melon);margin-top:14px}
+.state{margin-top:18px}
+.label{font-size:20px;opacity:.92}
+.head{font-size:24px;font-weight:800;line-height:1.35;margin:2px 0 6px;word-break:keep-all}
+.more{font-size:20px;line-height:1.55;word-break:keep-all}
+
+.note{margin:16px 20px 0;padding:12px 14px;border-radius:12px;background:#fff3cd;color:#5c4400;font-size:20px}
+section{margin:0 20px;padding:26px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{display:flex;align-items:center;gap:14px;font-size:20px;font-weight:700;margin:0 0 14px}
+h2::after{content:"";flex:1 0 24px;height:1px;background:var(--line)}
+.sub{color:var(--sub);font-size:20px}
+
+/* 지금 */
+.now{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.temp{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1.1}
+.emoji{font-size:32px;line-height:1}
+.rainline{border-radius:14px;padding:10px 14px;margin-bottom:10px;font-weight:700;font-size:22px;
+  background:var(--line);color:var(--ink)}
+.rainline.wet{background:color-mix(in srgb,var(--sky) 18%,transparent);color:var(--sky)}
+
+/* 24시간 */
+.chipwrap{position:relative;margin:0 -20px}
+.chipwrap::after{content:"";position:absolute;top:0;right:0;bottom:8px;width:34px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--paper))}
+.chips{display:flex;gap:10px;overflow-x:auto;padding:0 20px 10px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.chip{flex:0 0 96px;scroll-snap-align:start;text-align:center;background:var(--sheet);border:1px solid var(--line);
+  border-radius:16px;padding:12px 2px 10px;font-size:20px;line-height:1.5}
+.chip b{display:block;font-family:var(--serif);font-size:22px}
+.chip.hot{border-color:var(--bad);box-shadow:inset 0 5px 0 var(--bad);padding-top:16px}
+
+/* 농가 체크 */
+.chk{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.chk:first-of-type{border-top:0;padding-top:0}
+.chk .name{font-weight:700}
+.chk .lvl{font-weight:700}
+.chk .val{flex:1 0 100%;color:var(--sub)}
+.meter{display:inline-flex;gap:5px;margin-left:auto}
+.meter i{display:block;width:24px;height:10px;border-radius:5px;background:var(--line)}
+
+/* 미세먼지 */
+.dust{display:flex;gap:28px}
+.dust>div{flex:1}
+.dust .g{font-size:24px;font-weight:800;line-height:1.3;margin:2px 0 8px}
+
+.day{min-height:56px;padding:8px 0;display:flex;flex-wrap:wrap;gap:0 12px;justify-content:space-between;align-items:center;border-top:1px solid var(--line)}
+.day:first-of-type{border-top:0}
+
+button{font:inherit;font-weight:700;min-height:52px;padding:0 30px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+details.about{margin:0 20px;border-top:1px solid var(--line);padding:6px 0}
+details.about summary{min-height:56px;display:flex;align-items:center;font-weight:700;cursor:pointer}
+details.about h3{font-size:20px;margin:16px 0 4px}
+details.about ul{margin:0;padding-left:22px}
+details.about li{margin:6px 0;word-break:keep-all}
+footer{margin:0 20px;padding:10px 0 32px;font-size:20px;color:var(--sub);text-align:center}
+footer p{margin:0 0 10px}
+footer .rule{margin:0 auto 18px}
+
+/* ── Premium visual refresh ── */
+:root{
+  --paper:#F3F6FA; --sheet:#FFFFFF; --ink:#172536; --sub:#637286; --line:#E2E8F0;
+  --ok:#167D63; --warn:#B7791F; --bad:#C24145; --sky:#3976B8; --melon:#F2C66D;
+  --h0:#102C45; --h1:#80551D; --h2:#8C2E3B;
+  --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo","Batang",serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{--paper:#0B1420;--sheet:#121F2E;--ink:#EDF3FA;--sub:#A4B3C5;--line:#27384A;
+    --ok:#5CC5A3;--warn:#E7B45D;--bad:#FF7D84;--sky:#82B8F0;--h0:#102A42;--h1:#69471B;--h2:#742A36}
+}
+*{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  letter-spacing:-.025em;padding-bottom:env(safe-area-inset-bottom)}
+main{max-width:560px;margin:0 auto;padding:0 0 24px}
+a{color:var(--sky);text-underline-offset:3px}
+.hero{isolation:isolate;position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(135deg,#102A42 0%,#17496A 58%,#287A85 100%);
+  padding:calc(env(safe-area-inset-top) + 28px) 25px 30px;border-radius:0 0 30px 30px;
+  box-shadow:0 12px 32px rgba(18,43,66,.15)}
+.hero.l1{background:linear-gradient(135deg,#61451E,#9C6A27 60%,#C18B3D)}
+.hero.l2{background:linear-gradient(135deg,#632B37,#9D3947 62%,#C45A58)}
+.hero::before{content:"";position:absolute;z-index:-1;right:-58px;top:-95px;width:260px;height:260px;border:1px solid rgba(255,255,255,.16);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)}
+.hero::after{content:"";position:absolute;z-index:-1;right:22px;bottom:-70px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.055)}
+.hero>*{position:relative}
+.brand{font-family:var(--serif);font-size:21px;font-weight:700;line-height:1.55;letter-spacing:-.045em;max-width:340px;word-break:keep-all}
+.by{font-size:13px;opacity:.78;margin-top:5px;letter-spacing:.02em}
+.rule{width:42px;height:3px;border-radius:8px;background:var(--melon);margin-top:18px}
+.state{margin-top:24px}
+.label{font-size:13px;opacity:.82;letter-spacing:.015em}
+.head{font-size:25px;font-weight:800;line-height:1.4;margin:5px 0 8px;letter-spacing:-.045em;word-break:keep-all}
+.more{font-size:14px;line-height:1.75;opacity:.94;word-break:keep-all}
+.note{margin:14px 16px 0;padding:12px 14px;border:1px solid #F0D48A;border-radius:14px;background:#FFF7DE;color:#79551A;font-size:13px}
+section{margin:14px 14px 0;padding:20px 18px;background:var(--sheet);border:1px solid var(--line);border-radius:20px;box-shadow:0 3px 12px rgba(22,37,54,.035)}
+section:last-of-type{border-bottom:1px solid var(--line)}
+h2{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;letter-spacing:-.035em;margin:0 0 16px}
+h2::before{content:"";width:4px;height:18px;flex:0 0 4px;border-radius:4px;background:var(--sky)}
+h2::after{content:"";flex:1 0 12px;height:1px;background:var(--line)}
+.sub{color:var(--sub);font-size:13px;line-height:1.7}
+.now{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.temp{font-family:var(--serif);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-.06em}
+.emoji{font-size:40px;line-height:1;filter:drop-shadow(0 5px 7px rgba(20,40,60,.1))}
+.rainline{border-radius:12px;padding:11px 13px;margin-bottom:10px;font-weight:700;font-size:14px;background:color-mix(in srgb,var(--line) 65%,transparent);color:var(--ink)}
+.rainline.wet{background:color-mix(in srgb,var(--sky) 13%,transparent);color:var(--sky)}
+.chipwrap{position:relative;margin:0 -18px}
+.chipwrap::after{content:"";position:absolute;top:0;right:0;bottom:8px;width:26px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--sheet))}
+.chips{display:flex;gap:9px;overflow-x:auto;padding:0 18px 9px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.chip{flex:0 0 82px;scroll-snap-align:start;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:11px 4px 10px;font-size:12px;line-height:1.8;color:var(--sub)}
+.chip b{display:block;font-family:var(--serif);font-size:20px;color:var(--ink);margin:4px 0}
+.chip.hot{border-color:var(--bad);box-shadow:inset 0 3px 0 var(--bad);padding-top:14px}
+.chk{display:flex;flex-wrap:wrap;align-items:center;gap:3px 10px;padding:13px 0;border-top:1px solid var(--line);font-size:14px}
+.chk:first-of-type{border-top:0;padding-top:0}
+.chk .name{font-weight:750}
+.chk .lvl{font-size:12px;font-weight:800}
+.chk .val{flex:1 0 100%;color:var(--sub);font-size:12px;margin-top:1px}
+.meter{display:inline-flex;gap:4px;margin-left:auto}
+.meter i{display:block;width:18px;height:5px;border-radius:5px;background:var(--line)}
+.dust{display:flex;gap:12px}
+.dust>div{flex:1;min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:14px}
+.dust .g{font-size:20px;font-weight:800;line-height:1.3;margin:4px 0 10px}
+.day{min-height:60px;padding:12px 0;display:flex;flex-wrap:wrap;gap:4px 10px;justify-content:space-between;align-items:center;border-top:1px solid var(--line);font-size:13px}
+.day:first-of-type{border-top:0}
+.day span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
+button{font:inherit;font-size:14px;font-weight:750;min-height:46px;padding:0 24px;border-radius:999px;border:0;background:#173D5A;color:#fff;cursor:pointer;box-shadow:0 4px 10px rgba(23,61,90,.15);transition:transform .15s ease,opacity .15s ease}
+button:active{transform:scale(.98)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+details.about{margin:18px 18px 0;padding:4px 0 10px;border-top:1px solid var(--line)}
+details.about summary{min-height:52px;display:flex;align-items:center;font-size:14px;font-weight:750;cursor:pointer;list-style:none}
+details.about summary::-webkit-details-marker{display:none}
+details.about summary::after{content:"＋";margin-left:auto;color:var(--sub);font-size:18px}
+details.about[open] summary::after{content:"−"}
+details.about h3{font-size:14px;margin:18px 0 5px}
+details.about ul{margin:0;padding-left:19px}
+details.about li{margin:7px 0;word-break:keep-all;font-size:13px;line-height:1.75}
+footer{margin:10px 22px 0;padding:16px 0 20px;font-size:11px;line-height:1.8;color:var(--sub);text-align:center}
+footer p{margin:0 0 9px}
+footer .rule{margin:0 auto 15px}
+@media(min-width:600px){
+  body{padding-top:24px;padding-bottom:24px}
+  main{background:var(--paper);border-radius:30px;overflow:hidden}
+  .hero{border-radius:28px}
+  section{margin-left:18px;margin-right:18px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button{transition:none}}
+
+</style>
+</head>
+<body>
+<main id="app"><section><p class="sub">날씨를 불러오는 중입니다…</p></section></main>
+
+<script>
+// ── 설정 ──────────────────────────────────────────────
+const PLACE = '성주읍';
+const BRAND = '<div class="brand">성주읍민을 위한 우리 동네 실시간 기상통보</div><div class="by">제작 전승대</div><div class="rule"></div>';
+const LAT = 35.919, LON = 128.283;          // 성주읍 대략 좌표
+const OBS_URL = '';   // Cloudflare Worker 주소 (예: https://seongju-obs.내이름.workers.dev). 비어 있으면 예측값만 표시
+// [주의, 위험] 기준값 — 재배 작물에 맞게 조정하세요
+const T = { frost:[3,0], heat:[33,35], gust:[8,14], range:[12,15], hum:[85,90] };
+
+const WX_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}`
+  + `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m`
+  + `&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m,wind_gusts_10m`
+  + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
+  + `&timezone=Asia%2FSeoul&wind_speed_unit=ms&forecast_days=3`;
+const AQ_URL = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}`
+  + `&current=pm10,pm2_5&timezone=Asia%2FSeoul`;
+
+const EMOJI = {'맑음':'☀️','구름많음':'⛅','흐림':'☁️','비':'🌧️','눈':'❄️'};
+const COL = ['var(--ok)','var(--warn)','var(--bad)'];
+const NAME = ['안전','주의','위험'];
+const GN = ['좋음','보통','나쁨','매우나쁨'];
+const GC = ['var(--sky)','var(--ok)','var(--warn)','var(--bad)'];
+const G10 = [30,80,150,Infinity], G25 = [15,35,75,Infinity];
+const grade = (v,c) => c.findIndex(x => v <= x);
+const sky = c => c<=1 ? '맑음' : c==2 ? '구름많음' : c<=48 ? '흐림' : ((c>=71&&c<=77)||c==85||c==86) ? '눈' : '비';
+const hhmm = iso => { const d = new Date(iso); return d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0'); };
+const meter = (n, lv, col) => '<span class="meter">' + Array.from({length:n}, (_, i) => `<i${i <= lv ? ` style="background:${col}"` : ''}></i>`).join('') + '</span>';
+const PTY = {0:'비 없음',1:'비 오는 중',2:'비/눈 오는 중',3:'눈 오는 중',5:'빗방울',6:'빗방울·눈날림',7:'눈날림'};
+const fmt = v => v == null ? '-' : v;
+const obsDate = b => new Date(`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}T${b.slice(8,10)}:${b.slice(10,12)}:00+09:00`);
+const when = h => (h<6 ? '새벽 ' : h<12 ? '오전 ' : h<18 ? '오후 ' : '밤 ') + (h%12||12) + '시경';
+
+// ── 데이터 ────────────────────────────────────────────
+let lastErr = '';
+async function getJson(url){
+  let err;
+  for(let k = 0; k < 2; k++){               // 한 번 실패하면 다시 시도
+    const ac = new AbortController(), id = setTimeout(() => ac.abort(), 15000);
+    try{
+      const r = await fetch(url, {signal:ac.signal, cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.json();
+    }catch(e){ err = e; }
+    finally{ clearTimeout(id); }
+  }
+  throw err;
+}
+const nz = (v, d = 0) => (v == null || Number.isNaN(v)) ? d : v;
+
+async function load(){
+  lastErr = '';
+  try{
+    const [w, a, o] = await Promise.all([
+      getJson(WX_URL), getJson(AQ_URL).catch(() => null),
+      OBS_URL ? getJson(OBS_URL).catch(() => null) : Promise.resolve(null)
+    ]);
+    const c = w.current, hr = w.hourly, dl = w.daily;
+    if(!c || !hr || !dl) throw new Error('날씨 자료 형식이 예상과 다릅니다');
+    const start = Math.max(0, hr.time.findIndex(t => t >= c.time.slice(0,13) + ':00'));
+    const hourly = [];
+    for(let i = start; i < start+24 && i < hr.time.length; i++){
+      if(hr.temperature_2m[i] == null) continue;
+      const ws = nz(hr.wind_speed_10m[i]);
+      hourly.push({
+        h: +hr.time[i].slice(11,13), sky: sky(nz(hr.weather_code[i])),
+        t: Math.round(hr.temperature_2m[i]), rain: nz(hr.precipitation_probability[i]),
+        ws, wind: +nz(hr.wind_gusts_10m[i], ws).toFixed(1)
+      });
+    }
+    if(!hourly.length) throw new Error('시간별 예보가 비어 있습니다');
+    const daily = [1,2].filter(i => dl.time && dl.time[i]).map(i => ({
+      d: ['내일','모레'][i-1], sky: sky(nz(dl.weather_code[i])),
+      min: Math.round(nz(dl.temperature_2m_min[i])), max: Math.round(nz(dl.temperature_2m_max[i])),
+      rain: nz(dl.precipitation_probability_max[i])
+    }));
+    const D = {
+      updated: new Date().toISOString(),
+      now: { t:Math.round(nz(c.temperature_2m, hourly[0].t)), feels:Math.round(nz(c.apparent_temperature, nz(c.temperature_2m, hourly[0].t))),
+             sky:sky(nz(c.weather_code)), hum:nz(c.relative_humidity_2m), wind:nz(c.wind_speed_10m), gust:nz(c.wind_gusts_10m) },
+      dust: (a && a.current && a.current.pm10 != null && a.current.pm2_5 != null)
+              ? { pm10:Math.round(a.current.pm10), pm25:Math.round(a.current.pm2_5) } : null,
+      hourly, daily,
+      obs: (o && o.ok && o.base) ? { t:o.t, rn1:o.rn1, reh:o.reh, wsd:o.wsd, pty:o.pty, base:o.base } : null
+    };
+    try{ localStorage.setItem('wx_seongju', JSON.stringify(D)); }catch(_){}
+    return D;
+  }catch(e){
+    lastErr = (e && e.name === 'AbortError') ? '응답이 너무 오래 걸렸습니다' : ((e && e.message) || String(e));
+    try{
+      const c = JSON.parse(localStorage.getItem('wx_seongju'));
+      if(c){ c.stale = true; return c; }
+    }catch(_){}
+    return null;
+  }
+}
+
+// ── 화면 ──────────────────────────────────────────────
+function render(D){
+  const el = document.getElementById('app');
+  if(!D){
+    el.innerHTML = `<div class="hero l2">${BRAND}<div class="state"><div class="label">${PLACE}</div>
+      <div class="head">날씨 정보를 가져오지 못했습니다</div>
+      <div class="more">원인: ${lastErr || '알 수 없음'}</div></div></div>
+      <section><button onclick="boot()">다시 불러오기</button>
+      <p class="sub" style="margin-top:14px">계속 안 되면 인터넷 연결을 확인하고, 카카오톡 안에서 열었다면 크롬이나 사파리 같은 다른 브라우저로 열어 보세요.</p></section>`;
+    return;
+  }
+  const H = D.hourly, N = D.now;
+  const ts = H.map(x => x.t), min = Math.min(...ts), max = Math.max(...ts);
+  const minH = H.find(x => x.t === min).h;
+  const gust = Math.max(...H.map(x => x.wind), N.gust || 0);
+  const first12 = H.slice(0,12);
+  const clear = first12.every(x => x.sky === '맑음');
+  const calm = Math.max(...first12.map(x => x.ws)) < 3;
+  const rg = max - min;
+
+  const ob = D.obs;
+  const tmin = (ob && ob.t != null) ? Math.min(min, ob.t) : min;
+  const frost = tmin <= T.frost[1] ? 2 : (tmin <= T.frost[0] || (tmin <= 5 && clear && calm)) ? 1 : 0;
+  const heat  = max >= T.heat[1] ? 2 : max >= T.heat[0] ? 1 : 0;
+  const wind  = gust >= T.gust[1] ? 2 : gust >= T.gust[0] ? 1 : 0;
+  const range = rg >= T.range[1] ? 2 : rg >= T.range[0] ? 1 : 0;
+  const hum   = N.hum >= T.hum[1] ? 2 : N.hum >= T.hum[0] ? 1 : 0;
+  const checks = [
+    ['서리', frost, tmin < min ? `지금 관측 ${tmin}℃` : `24시간 최저 ${min}℃ (${when(minH)})`],
+    ['고온', heat,  `24시간 최고 ${max}℃`],
+    ['강풍', wind,  `순간풍속 ${Math.round(gust)}m/s`],
+    ['일교차', range, `${rg}℃`],
+    ['습도', hum,   `현재 ${N.hum}%`]
+  ];
+  const warns = checks.filter(c => c[1] > 0).sort((a,b) => b[1] - a[1]);
+  const worst = warns.length ? warns[0][1] : 0;
+
+  const now = new Date();
+  const dateStr = `${now.getMonth()+1}월 ${now.getDate()}일 ${'일월화수목금토'[now.getDay()]}요일`;
+
+  let h = '';
+  // 상태 블록
+  h += `<div class="hero l${worst}">${BRAND}<div class="state"><div class="label">${PLACE} 위치 기준 · ${dateStr}</div>`;
+  if(!warns.length){
+    h += `<div class="head">특별한 위험 없음</div>
+          <div class="more">앞으로 24시간 기준 · 최저 ${min}℃ · 최고 ${max}℃ · 순간풍속 ${Math.round(gust)}m/s</div>`;
+  } else {
+    h += `<div class="head">${warns[0][0]} ${NAME[warns[0][1]]}</div>
+          <div class="more">${warns[0][2]}` + (warns.length > 1 ? `<br>${warns.slice(1).map(w => `${w[0]} ${NAME[w[1]]}`).join(' · ')}` : '') + `</div>`;
+  }
+  h += '</div></div>';
+
+  if(D.stale) h += `<div class="note">통신이 안 되어 ${hhmm(D.updated)}에 받은 마지막 정보를 보여드립니다.</div>`;
+
+  // 지금
+  if(ob){
+    const wet = ob.pty > 0, snow = ob.pty === 3 || ob.pty === 7;
+    const age = (Date.now() - obsDate(ob.base).getTime()) / 3600e3;
+    h += `<section><h2>지금 · 성주 관측값 (${ob.base.slice(8,10)}:${ob.base.slice(10,12)} 기준)</h2>
+      <div class="now"><div class="temp">${fmt(ob.t)}℃</div><div class="emoji">${wet ? (snow ? '❄️' : '🌧️') : (EMOJI[N.sky] || '')}</div></div>
+      <div class="rainline ${wet ? 'wet' : ''}">${PTY[ob.pty] ?? '강수 정보 없음'} · 1시간 강수량 ${fmt(ob.rn1)}mm</div>
+      <div class="sub">습도 ${fmt(ob.reh)}% · 바람 ${fmt(ob.wsd)}m/s</div>
+      ${age > 2.5 ? '<div class="sub" style="color:var(--bad);font-weight:700">관측값이 오래되었습니다. 참고만 하세요.</div>' : ''}
+      <div class="sub">기상청 자동관측(AWS) 값 · 하늘 상태는 예측: ${N.sky}</div></section>`;
+  } else {
+    h += `<section><h2>지금 (예측 모델 값)</h2>
+      <div class="now"><div class="temp">${N.t}℃</div><div class="emoji">${EMOJI[N.sky] || ''}</div></div>
+      <div class="sub">${N.sky} · 체감 ${N.feels}℃ · 습도 ${N.hum}% · 바람 ${N.wind}m/s</div></section>`;
+  }
+
+  // 24시간
+  h += `<section><h2>앞으로 24시간</h2><p class="sub" style="margin:0 0 12px">옆으로 밀면 24시간 전체를 볼 수 있습니다 ➜<br>바람은 순간풍속입니다.</p><div class="chipwrap"><div class="chips">` +
+    H.map(x => `<div class="chip ${x.t <= T.frost[1] || x.wind >= T.gust[1] ? 'hot' : ''}">${x.h}시<b>${x.t}°</b>${EMOJI[x.sky] || ''}<br>비 ${x.rain}%<br>${Math.round(x.wind)}m/s</div>`).join('') +
+    `</div></div></section>`;
+
+  // 농가 체크
+  h += `<section><h2>농가 체크</h2>` +
+    checks.map(c => `<div class="chk"><span class="name">${c[0]}</span><span class="lvl" style="color:${COL[c[1]]}">${NAME[c[1]]}</span>${meter(3, c[1], COL[c[1]])}<span class="val">${c[2]}</span></div>`).join('') + `</section>`;
+
+  // 미세먼지
+  h += `<section><h2>미세먼지</h2>`;
+  if(D.dust){
+    const g10 = grade(D.dust.pm10, G10), g25 = grade(D.dust.pm25, G25);
+    h += `<div class="dust">
+      <div><div class="sub">PM10 ${D.dust.pm10}</div><div class="g" style="color:${GC[g10]}">${GN[g10]}</div>${meter(4, g10, GC[g10])}</div>
+      <div><div class="sub">PM2.5 ${D.dust.pm25}</div><div class="g" style="color:${GC[g25]}">${GN[g25]}</div>${meter(4, g25, GC[g25])}</div></div>
+      <p class="sub" style="margin:14px 0 0">예측 모델 값입니다. 실측값은 <a href="https://www.airkorea.or.kr" target="_blank" rel="noopener">에어코리아</a>에서 확인하세요.</p>`;
+  } else {
+    h += `<p class="sub" style="margin:0">미세먼지 정보를 가져오지 못했습니다. <a href="https://www.airkorea.or.kr" target="_blank" rel="noopener">에어코리아</a>에서 확인하세요.</p>`;
+  }
+  h += `</section>`;
+
+  // 내일·모레
+  h += `<section><h2>내일 · 모레</h2>` +
+    D.daily.map(x => `<div class="day"><span>${x.d} ${EMOJI[x.sky] || ''} ${x.sky}</span><span>${x.min}° / ${x.max}° · 비 ${x.rain}%</span></div>`).join('') + `</section>`;
+
+  // 하단
+  h += `<section style="text-align:center"><button onclick="boot()">새로고침</button></section>
+    <details class="about"><summary>이 앱에 대하여 (특징과 한계)</summary>
+      <p class="sub" style="margin:0">제작: 전승대</p>
+      <h3>특징</h3>
+      <ul>
+        <li>경북·영남 같은 넓은 지역 예보가 아니라 성주읍 위치를 기준으로 가져온 값입니다. 비나 기온은 가까운 지역끼리도 다를 수 있어서, 동네 기준 값이 더 참고가 됩니다.</li>
+        ${ob ? '<li>"지금" 값은 성주읍이 속한 5km 구역을 대표하는 기상청 자동관측(AWS) 관측값입니다. 성주에 비가 오는지를 예측이 아니라 관측으로 알려줍니다.</li>' : ''}
+        <li>현재 날씨와 앞으로 24시간 예보를 한 화면에 보여줍니다.</li>
+        <li>서리·고온·강풍·일교차·습도를 안전/주의/위험 신호로 알려줍니다.</li>
+        <li>미세먼지 등급을 함께 보여줍니다.</li>
+        <li>설치나 가입 없이 열면 최신 정보를 가져오고, 통신이 안 되면 마지막으로 받은 정보를 보여줍니다.</li>
+      </ul>
+      <h3>한계</h3>
+      <ul>
+        ${ob
+          ? '<li>관측값은 성주읍이 속한 구역의 대표 관측소 값이라 읍내 모든 곳과 같지는 않고, 정시 기준으로 1시간 단위로 갱신됩니다.</li><li>24시간·내일·모레 예보와 미세먼지는 관측이 아니라 예측 모델 값이며 실제와 차이가 날 수 있습니다. 특히 소나기는 어느 동네에 내릴지 맞추기 어렵습니다.</li>'
+          : '<li>성주읍에서 직접 잰 관측값이 아니라, 성주읍 위치에 맞춘 수치예보 모델 값입니다. 기상청 자료가 아니며 실제 날씨와 차이가 날 수 있습니다. 특히 소나기는 어느 동네에 내릴지 맞추기 어렵습니다.</li>'}
+        <li>기상특보(한파·강풍·호우 등)는 들어 있지 않습니다. 기상청에서 따로 확인하세요.</li>
+        <li>자동 알림은 없습니다. 앱을 열어야 확인할 수 있습니다.</li>
+        <li>경고 기준값은 일반적인 기준이라 작물과 생육 시기에 따라 맞지 않을 수 있습니다.</li>
+        <li>참고용입니다. 최종 판단은 현장 확인을 우선하세요.</li>
+      </ul>
+    </details>
+    <footer>
+      <div class="rule"></div>
+      <p>마지막 갱신 ${hhmm(D.updated)}</p>
+      <p><b>기상특보는 이 화면에 포함되어 있지 않습니다.</b> 한파·강풍·호우 특보는 <a href="https://www.weather.go.kr" target="_blank" rel="noopener">기상청</a>에서 꼭 확인하세요.</p>
+      <p>참고용입니다. 하우스 안과 밭의 실제 상태는 현장에서 확인하세요.<br>자료: ${ob ? '기상청 자동관측(AWS), ' : ''}Open-Meteo 수치예보</p>
+    </footer>`;
+  el.innerHTML = h;
+}
+
+// ── 시작 ──────────────────────────────────────────────
+let lastLoad = 0;
+function boot(){ load().then(D => { lastLoad = Date.now(); try{ render(D); }catch(e){ lastErr = '화면 오류: ' + e.message; render(null); } window.scrollTo(0,0); }); }
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && Date.now() - lastLoad > 30*60*1000) boot();
+});
+boot();
+</script>
+</body>
+</html>
